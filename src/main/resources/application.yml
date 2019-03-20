@@ -1,0 +1,21 @@
+## YAML Template.
+
+
+server :
+    port : 4042
+    
+spring : 
+    datasource:
+        url : jdbc:mysql://localhost:3306/tlizalfa?useSSL=true
+        username : root
+        password : root
+        testWhileIdle : true
+        validationQuery : SELECT 1
+        
+    jpa :
+        show-sql : true
+        hibernate :
+            ddl-auto : update
+            properties :
+                hibernate :
+                    dialect : org.hibernate.dialect.MySQL5InnoDBDialect
