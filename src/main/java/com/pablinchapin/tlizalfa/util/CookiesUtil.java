@@ -18,7 +18,7 @@ import org.springframework.util.SerializationUtils;
  */
 public class CookiesUtil {
     
-    public static Optional<Cookie> getCookies(HttpServletRequest request, String name){
+    public static Optional<Cookie> getCookie(HttpServletRequest request, String name){
     
         Cookie[] cookies = request.getCookies();
     

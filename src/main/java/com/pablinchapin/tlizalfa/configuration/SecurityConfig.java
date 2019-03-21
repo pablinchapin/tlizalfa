@@ -5,6 +5,13 @@
  */
 package com.pablinchapin.tlizalfa.configuration;
 
+import com.pablinchapin.tlizalfa.security.CustomUserDetailsService;
+import com.pablinchapin.tlizalfa.security.RestAuthenticationEntryPoint;
+import com.pablinchapin.tlizalfa.security.TokenAuthenticationFilter;
+import com.pablinchapin.tlizalfa.security.oauth2.CustomOAuth2UserService;
+import com.pablinchapin.tlizalfa.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.pablinchapin.tlizalfa.security.oauth2.OAuth2AuthenticationFailureHandler;
+import com.pablinchapin.tlizalfa.security.oauth2.OAuth2AuthenticationSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +26,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+
 
 /**
  *
@@ -84,13 +91,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     protected void configure(HttpSecurity http) throws Exception {
     
         http
+                .csrf()
+                    .disable();
+        
+        
+        //Requires login with role ROLE_EMPLOYEE or ROLE_MANAGER
+        //If not, it will redirect to /admin/login
+        http.authorizeRequests()
+                .antMatchers("/admin/orderList", "/admin/order", "/admin/accountInfo")
+                .access("hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER')");
+        
+        //Pages only for ROLE_MANAGER
+        http.authorizeRequests()
+                .antMatchers("/admin/product")
+                .access("hasRole('ROLE_MANAGER')");
+        
+        //When user login, role XX, but access to the page requires the YY role,
+        //An AccessDeniedException will be thrown
+        http.authorizeRequests()
+                .and()
+                .exceptionHandling()
+                .accessDeniedPage("/403");
+        
+        
+        
+        http
                 .cors()
                     .and()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
-                .csrf()
-                    .disable()
                 .formLogin()
                     .disable()
                 .httpBasic()
@@ -112,6 +142,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                             "/**/*.js"
                         ).permitAll()
                     .antMatchers("/auth/**", "/oauth2/**")
+                        .permitAll()
+                    .antMatchers("/productList/**", "/productDetail/**")
                         .permitAll()
                     .anyRequest()
                         .authenticated()

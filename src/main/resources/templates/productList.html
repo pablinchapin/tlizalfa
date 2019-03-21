@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">LaLiz</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no shrink-to-fit=no"/>
+    
+    <link   rel="stylesheet" 
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" 
+            th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css}"
+            integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" 
+            crossorigin="anonymous">
+    <link   rel="stylesheet" 
+            href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+            th:href="@{https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"/>
+    <link   rel="stylesheet" 
+            href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css"
+            th:href="@{https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css}"/>
+    
+</head>
+<body>
+    
+    <th:block th:include="/_header"></th:block>
+    
+    
+    <div class="container">
+        
+        <div class="row">
+
+            <div class="col-md-4 order-md-1 mb-4">
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">Categories</span>
+                <span class="badge bagde-secondary badge-pill">3</span>
+                </h4>
+
+                <ul class="list-group mb-3">
+
+                    <li class="list-group-item d-flex justify-content-between lh-condensed"
+                        th:each="categoryInfo: ${paginationResultCategory}">
+                        <div>
+                            <!-- <a th:href="@{|/productList?categoryCode=${categoryInfo.code}&page=1|}"> -->
+                                <h6 class="my-0 mb-3" th:utext="${categoryInfo.name}"></h6>
+                            <!-- </a> -->
+                            <small class="text-muted" th:utext="${categoryInfo.description}"></small>
+                        </div>
+                        <span>
+                            <a href="#"
+                            class="btn btn-primary btn-md active"
+                            role="button"
+                            aria-pressed="true"
+                            th:href="@{|/productList?categoryId=${categoryInfo.id}&page=1|}">View</a>
+                        </span>
+                    </li>
+                
+                </ul>
+            </div>
+
+
+            <div class="col-md-8 order-md-2">
+                
+                <h1 class="h3 mb-3 font-weight-normal">Product List</h1>
+
+                <div class="card-deck mb-3 text-center" style="min-width: 240px;">
+
+                    <div class="card mb-4 shadow-sm"
+                         style="min-width: 220px; max-width: 220px;"
+                         th:each="productInfo: ${paginationResult}">
+                        <div class="card-header">
+                            <h4 class="my-0 font-weight-normal">
+                                <span th:utext="${productInfo.name}"></span>
+                            </h4>
+                        </div>
+
+                        <div class="card-body">
+                            <h1 class="card-title pricing-card-title">$ <span th:utext="${#numbers.formatDecimal(productInfo.price,3,2,'POINT')}"></span><small class="text-muted"> /each</small></h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li><span th:utext="${productInfo.id}"></span></li>
+                                <!--<li><span th:utext="${productInfo.description}"></span></li>-->
+                                <li>More info...</li>
+                                <li>Even more info...</li>
+                            </ul>
+                            
+                            <a  href="#"
+                            class="btn btn-primary btn-md active"
+                            role="button"
+                            aria-pressed="true"
+                            th:href="@{|/productDetail?id=${productInfo.id}|}">View</a>
+                            
+                        </div>
+                    </div>
+
+                </div>
+
+                
+                <!--
+                <div th:if="${paginationResult.totalPages > 1}">
+                    <th:block th:each="page: ${paginationResult.navigationPages}">
+                        <a th:if="${page != -1}" class="nav-item"
+                           th:href="@{|/productList?page=${page}|}" th:utext="${page}"></a>
+
+                        <span th:if="${page == -1}" class="nav-item">...</span>
+                    </th:block>
+                </div>
+                -->
+                
+
+            </div>
+        </div>
+    </div>
+        
+    
+    
+    
+    <th:block th:include="/_footer"></th:block>
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      
+</body>
+</html>
