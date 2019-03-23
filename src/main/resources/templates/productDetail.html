@@ -31,7 +31,7 @@
         <div class="row">
             
         
-        <!--
+        
         <th:block th:if="${cartForm == null || cartForm.cartLines == null || cartForm.cartLines.empty}">
             
             <div class="col-md-4 order-md-2 mb-4">
@@ -62,7 +62,7 @@
                     <li th:each="cartLineInfo, varStatus : ${cartForm.cartLines}"
                         class="list-group-item d-flex justify-content-between lh-condensed">
                         <div>
-                            <h6 th:utext="${cartLineInfo.productInfo.code}"
+                            <h6 th:utext="${cartLineInfo.productInfo.id}"
                                 class="my-0"></h6>
                             <small th:utext="${cartLineInfo.productInfo.name}"
                                 class="text-muted"></small>
@@ -85,7 +85,7 @@
             </div>
             
         </th:block>
-        -->
+        
             
                         
             <div class="col-md-8 order-md-1">
@@ -94,6 +94,7 @@
                 
                 <div class="card mb-3" style="max-width: 540px;">
                     
+                    <img th:src="${productInfo.frontImageUrl}" class="card-img" alt="...">
                     <!--
                     
                     <img th:src="${productInfo.frontImageUrl}" class="card-img" alt="...">
@@ -108,21 +109,24 @@
                     -->
                 
                     <div class="card-body">
-                        <h5 class="card-title" ></h5><!-- th:utext="${productInfo.name}" -->
-                        <p class="card-text" th:utext="${productInfo}">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <h5 class="card-title" th:utext="${productInfo.name}"></h5><!--  -->
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p> <!-- th:utext="${productInfo}" -->
+                        
+                        <p class="card-text" th:utext="${productInfo.description}"></p> <!-- th:utext="${productInfo}" -->
                 
-                        <!--<p class="card-text"><small class="text-muted" th:utext="${productInfo.description}"></small></p>
+                        
+                        <p class="card-text"><small class="text-muted" th:utext="${productInfo.nutritionalInfo}"></small></p>
                         <p class="card-text"><small class="text-success" th:utext="${productInfo.id}"></small></p>
                         <p class="card-text"><small class="text-bold" th:utext="${#numbers.formatDecimal(productInfo.price,3,2,'POINT')}"></small></p>
                 
                         <p class="card-text"><small class="text-success" th:utext="${productInfo.id}"></small></p>
-                        <p class="card-text"><small class="text-bold" th:utext="${#numbers.formatDecimal(productInfo.price,3,2,'POINT')}"></small></p>
+                        <p class="card-text"><small class="text-bold" th:utext="${#numbers.formatDecimal(productInfo.tax,3,2,'POINT')}"></small></p>
 
 
 
                         <div class="row">
                             <div class="col-md-12">
-                                <form th:action="@{|/shoppingCart?code=${productInfo.id}|}"
+                                <form th:action="@{|/shoppingCart?id=${productInfo.id}|}"
                                     method="POST" enctype="multipart/form-data"
                                     class="form-horizontal"
                                     novalidate>
@@ -161,7 +165,7 @@
                             </form>
                             
                             </div>
-                        -->
+                        
                             
                         </div>
                     

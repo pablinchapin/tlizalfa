@@ -7,9 +7,14 @@ package com.pablinchapin.tlizalfa.controller;
 
 
 import com.pablinchapin.tlizalfa.entity.Category;
+import com.pablinchapin.tlizalfa.entity.CustomerForm;
 import com.pablinchapin.tlizalfa.entity.Product;
+import com.pablinchapin.tlizalfa.model.CartInfo;
+import com.pablinchapin.tlizalfa.model.CustomerInfo;
+import com.pablinchapin.tlizalfa.model.ProductInfo;
 import com.pablinchapin.tlizalfa.service.CategoryServiceImpl;
 import com.pablinchapin.tlizalfa.service.ProductServiceImpl;
+import com.pablinchapin.tlizalfa.util.CartUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,7 +25,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -89,7 +100,7 @@ public class MainController {
     
     @GetMapping("/productList")
     public ModelAndView listProductHandler(
-            @RequestParam(value = "categoryId") Long categoryId,
+            @RequestParam(value = "categoryId", defaultValue="1", required=false) Long categoryId,
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ){
@@ -124,17 +135,161 @@ public class MainController {
             HttpServletRequest request,
             @RequestParam(value = "id", defaultValue = "") Long id
     ){
-        Optional<Product> product = null;
-        
-        product = productService.getProductDetail(id);
-        
-        logger.info(product.toString());
         
         ModelAndView mav = new ModelAndView();
         mav.setViewName("productDetail");
         
-        mav.addObject("productInfo", product);
+        Optional<Product> product;
+        Product productData = new Product();
+        product = productService.getProductDetail(id);
         
+        if(product.isPresent()){
+            productData = product.get();
+        }
+        
+        logger.info(productData.toString());
+        
+        CartInfo cartInfo = CartUtils.getCartInSession(request);
+        
+        mav.addObject("productInfo", productData);
+        mav.addObject("cartForm", cartInfo);
+        
+    return mav;
+    }
+    
+    
+    @GetMapping("/shoppingCart")
+    public ModelAndView shoppingCartHandler(
+            HttpServletRequest request
+    ){
+    
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("shoppingCart");
+        
+        CartInfo cartInfo = CartUtils.getCartInSession(request);
+        
+        mav.addObject("cartForm", cartInfo);
+        
+    return mav;
+    }
+    
+    
+    @PostMapping("/shoppingCart")
+    public ModelAndView shoppingCartAddProduct(
+            HttpServletRequest request,
+            @RequestParam(value = "id", defaultValue = "") Long id,
+            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+            @RequestParam(value = "action", defaultValue = "add") String action
+    ){
+        
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("shoppingCart");
+        
+        Optional<Product> product;
+        Product productData = new Product();
+        
+        if(id != null && id > 0){
+            product = productService.getProductDetail(id);
+            
+            if(product.isPresent()){
+                productData = product.get();
+                
+                CartInfo cartInfo = CartUtils.getCartInSession(request);
+                ProductInfo productInfo = new ProductInfo(productData);
+                
+                if(action.equals("add")){
+                    cartInfo.addProduct(productInfo, quantity);
+                }else{
+                        cartInfo.removeProduct(productInfo);
+                }
+            }
+        }
+        
+        
+        CartInfo cartInfo = CartUtils.getCartInSession(request);
+        
+        mav.addObject("cartForm", cartInfo);
+        
+    return mav;
+    }
+    
+    
+    @GetMapping("/shoppingCartCheckout")
+    public ModelAndView shoppingCartCheckout(
+            HttpServletRequest request            
+    ){
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("shoppingCartCheckout");
+        
+        CartInfo cartInfo = CartUtils.getCartInSession(request);
+        CustomerInfo customerInfo = cartInfo.getCustomerInfo();
+        
+        if(customerInfo != null){
+            CustomerForm customerForm = new CustomerForm(customerInfo);
+            mav.addObject("customerForm", customerForm);
+        }else{
+                mav.addObject("customerForm", new CustomerForm());
+        }
+        
+        
+        if(cartInfo == null || cartInfo.isEmpty()){
+            return new ModelAndView("redirect:/shoppingCart");
+        }
+        
+        mav.addObject("cartForm", cartInfo);
+        
+        
+    return mav;
+    }
+    
+    
+    @PostMapping("/shoppingCartCheckout")
+    public ModelAndView shoppinCartCheckoutHandler(
+            HttpServletRequest request,
+            @ModelAttribute("customerForm") @Validated CustomerForm customerForm,
+            BindingResult result
+    ){
+        
+        ModelAndView mav = new ModelAndView();
+        
+        
+        CartInfo cartInfo = CartUtils.getCartInSession(request);
+        
+        if(result.hasErrors()){
+        
+            for(Object object : result.getAllErrors()) {
+                if(object instanceof FieldError) {
+                    FieldError fieldError = (FieldError) object;
+
+                    System.out.println("/shoppingCartCheckout POST fieldError-> " +fieldError.getCode());
+                }
+
+                if(object instanceof ObjectError) {
+                    ObjectError objectError = (ObjectError) object;
+
+                    System.out.println("/shoppingCartCheckout POST objectError-> " +objectError.getCode());
+                }
+            }
+            
+            customerForm.setValid(false);
+            
+            mav.setViewName("shoppingCartCheckout");
+            
+            mav.addObject("cartForm", cartInfo);
+            mav.addObject("customerForm", customerForm);
+            
+            return mav;
+        }
+        
+        customerForm.setValid(true);
+        
+        CustomerInfo customerInfo = new CustomerInfo(customerForm);
+        cartInfo.setCustomerInfo(customerInfo);
+        
+        mav.setViewName("shoppingCartConfirmation");
+        mav.addObject("cartForm", cartInfo);
+        mav.addObject("customerForm", customerForm);
+    
     return mav;
     }
     
