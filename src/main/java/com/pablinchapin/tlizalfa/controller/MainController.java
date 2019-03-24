@@ -286,11 +286,61 @@ public class MainController {
         CustomerInfo customerInfo = new CustomerInfo(customerForm);
         cartInfo.setCustomerInfo(customerInfo);
         
-        mav.setViewName("shoppingCartConfirmation");
-        mav.addObject("cartForm", cartInfo);
-        mav.addObject("customerForm", customerForm);
+        //mav.setViewName("shoppingCartConfirmation");
+        //mav.addObject("cartForm", cartInfo);
+        //mav.addObject("customerForm", customerForm);
+        
+        return new ModelAndView("redirect:/shoppingCartConfirmation");
     
+    //return mav;
+    }
+    
+    
+    @GetMapping("/shoppingCartConfirmation")
+    public ModelAndView shoppingCartConfirmation(
+            HttpServletRequest request
+    ){
+        
+        ModelAndView mav = new ModelAndView();
+        
+        CartInfo cartInfo = CartUtils.getCartInSession(request);
+        CustomerInfo customerInfo = cartInfo.getCustomerInfo();
+        
+        mav.setViewName("shoppingCartConfirmation");
+        
+        mav.addObject("cartForm", cartInfo);
+        mav.addObject("customerForm", customerInfo);
+        
     return mav;
+    }
+    
+    
+    @PostMapping("/shoppingCartConfirmation")
+    public ModelAndView shoppingCartConfirmationHandler(
+            HttpServletRequest request
+    ){
+        
+        //ModelAndView mav = new ModelAndView();
+        
+        CartInfo cartInfo = CartUtils.getCartInSession(request);
+        
+        CartUtils.removeCartInSession(request);
+        CartUtils.storeLastOrderedCartInSession(request, cartInfo);
+        
+    return new ModelAndView("redirect:/shoppingCartFinalize");
+    }
+    
+    
+    @GetMapping("/shoppingCartFinalize")
+    public ModelAndView shoppingCartFinalize(
+            HttpServletRequest request
+    ){
+        ModelAndView mav = new ModelAndView();
+        
+        mav.setViewName("shoppingCartFinalize");
+        
+    return mav;
+        
     }
     
     

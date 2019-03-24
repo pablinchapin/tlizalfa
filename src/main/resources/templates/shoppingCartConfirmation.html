@@ -252,17 +252,17 @@
 
                     <div class="row mb-3" th:each="cartLineInfo, varStatus : ${cartForm.cartLines}">
                         <div class="col-12 col-sm-12 col-md-2 text-center">
-                            <img class="img-responsive"  th:src="${cartLineInfo.productInfo.image_url}" alt="prewiew" width="120" height="80">
+                            <img class="img-responsive"  th:src="${cartLineInfo.productInfo.frontThumbImageUrl}" alt="prewiew" width="120" height="80">
                             <!-- src="http://placehold.it/120x80" -->
                         </div>
 
                         <div class="col-12 text-sm-center col-sm-12 text-md-left col-md-6">
                             <h4 class="product-name"><strong th:utext="${cartLineInfo.productInfo.name}"></strong></h4>
                             <h4>
-                                <small th:utext="${cartLineInfo.productInfo.code}"></small>
+                                <small th:utext="${cartLineInfo.productInfo.id}"></small>
                             </h4>
                         </div>
-                        <form th:action="@{|/shoppingCart?code=${cartLineInfo.productInfo.code}|}"
+                        <form th:action="@{|/shoppingCart?code=${cartLineInfo.productInfo.id}|}"
                                 method="POST" class="col-12 col-sm-12 text-sm-center col-md-4 text-md-right row">
                             <div class="col-3 col-sm-3 col-md-6 text-md-right" style="padding-top: 5px">
                                 <h6><strong th:utext="${#numbers.formatDecimal(cartLineInfo.amount,3,2,'POINT')}"><span class="text-muted">x</span></strong></h6>

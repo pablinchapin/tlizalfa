@@ -143,7 +143,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                         ).permitAll()
                     .antMatchers("/auth/**", "/oauth2/**")
                         .permitAll()
-                    .antMatchers("/productList/**", "/productDetail/**", "/shoppingCart/**", "/shoppingCartCheckout/**")
+                    .antMatchers("/productList/**", "/productDetail/**", "/shoppingCart/**", "/shoppingCartCheckout/**", "/shoppingCartConfirmation/**", "/shoppingCartFinalize/**")
                         .permitAll()
                     .anyRequest()
                         .authenticated()
