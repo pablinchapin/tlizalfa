@@ -55,6 +55,13 @@
             </th:block>
             
             
+            <th:block sec:authorize="hasRole('ROLE_MANAGER')">
+                <li class="nav-item">
+                    <a class="nav-link" 
+                       th:href="@{/customerOrders}">Order List</a>
+                </li>
+            </th:block>
+            
         </ul>
         
         

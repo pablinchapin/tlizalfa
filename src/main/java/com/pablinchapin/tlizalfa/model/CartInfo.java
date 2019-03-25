@@ -14,18 +14,18 @@ import java.util.List;
  */
 public class CartInfo {
     
-    private int orderNum;
+    private Long orderNum;
     private CustomerInfo customerInfo;
     private final List<CartLineInfo> cartLines = new ArrayList<>();
 
     public CartInfo() {
     }
 
-    public int getOrderNum() {
+    public Long getOrderNum() {
         return orderNum;
     }
 
-    public void setOrderNum(int orderNum) {
+    public void setOrderNum(Long orderNum) {
         this.orderNum = orderNum;
     }
 

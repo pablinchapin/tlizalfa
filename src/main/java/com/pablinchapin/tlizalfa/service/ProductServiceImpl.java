@@ -6,6 +6,7 @@
 package com.pablinchapin.tlizalfa.service;
 
 import com.pablinchapin.tlizalfa.entity.Product;
+import com.pablinchapin.tlizalfa.exception.ResourceNotFoundException;
 import com.pablinchapin.tlizalfa.repository.ProductRepository;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Optional<Product> getProductDetail(Long id) {
         return productRepository.findById(id);
+    }
+
+    @Override
+    public Product getProduct(Long id) {
+        return productRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
     }
 
     

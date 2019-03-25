@@ -6,6 +6,8 @@
 package com.pablinchapin.tlizalfa.repository;
 
 import com.pablinchapin.tlizalfa.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 /**
@@ -13,5 +15,8 @@ import org.springframework.data.repository.CrudRepository;
  * @author pvargas
  */
 public interface OrderRepository extends CrudRepository<Order, Long>{
+    
+    Page<Order> findAll(Pageable pageable);
+    
     
 }

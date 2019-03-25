@@ -6,8 +6,11 @@
 package com.pablinchapin.tlizalfa.service;
 
 import com.pablinchapin.tlizalfa.entity.Order;
+import com.pablinchapin.tlizalfa.exception.ResourceNotFoundException;
 import com.pablinchapin.tlizalfa.repository.OrderRepository;
 import java.time.LocalDate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,12 @@ public class OrderServiceImpl implements OrderService {
     public Iterable<Order> getAllOrders() {
         return this.orderRepository.findAll();
     }
+    
+    
+    @Override
+    public Page<Order> getOrdersByCustomerId(Pageable pageable, Long customerId) {
+        return orderRepository.findAll(pageable);
+    }
 
     @Override
     public Order create(Order order) {
@@ -43,5 +52,14 @@ public class OrderServiceImpl implements OrderService {
     public void update(Order order) {
         this.orderRepository.save(order);
     }
+
+    @Override
+    public Order getOrderDetail(Long orderId) {
+        return orderRepository
+                .findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
+    }
+
+    
     
 }

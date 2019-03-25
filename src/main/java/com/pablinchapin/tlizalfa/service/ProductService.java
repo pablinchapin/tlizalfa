@@ -25,4 +25,6 @@ public interface ProductService {
     
     Optional<Product> getProductDetail(Long id);
     
+    Product getProduct(@Min(value = 1L, message= "Invalid product ID") Long id);
+    
 }

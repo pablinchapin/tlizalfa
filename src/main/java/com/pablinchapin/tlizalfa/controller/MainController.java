@@ -8,13 +8,20 @@ package com.pablinchapin.tlizalfa.controller;
 
 import com.pablinchapin.tlizalfa.entity.Category;
 import com.pablinchapin.tlizalfa.entity.CustomerForm;
+import com.pablinchapin.tlizalfa.entity.Order;
+import com.pablinchapin.tlizalfa.entity.OrderProduct;
+import com.pablinchapin.tlizalfa.entity.OrderStatus;
 import com.pablinchapin.tlizalfa.entity.Product;
 import com.pablinchapin.tlizalfa.model.CartInfo;
+import com.pablinchapin.tlizalfa.model.CartLineInfo;
 import com.pablinchapin.tlizalfa.model.CustomerInfo;
 import com.pablinchapin.tlizalfa.model.ProductInfo;
 import com.pablinchapin.tlizalfa.service.CategoryServiceImpl;
+import com.pablinchapin.tlizalfa.service.OrderProductServiceImpl;
+import com.pablinchapin.tlizalfa.service.OrderServiceImpl;
 import com.pablinchapin.tlizalfa.service.ProductServiceImpl;
 import com.pablinchapin.tlizalfa.util.CartUtils;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +59,13 @@ public class MainController {
     
     @Autowired
     ProductServiceImpl productService;
+    
+    @Autowired
+    OrderServiceImpl orderService;
+    
+    @Autowired
+    OrderProductServiceImpl orderProductService;
+    
     
     
     @RequestMapping("/403")
@@ -169,6 +183,29 @@ public class MainController {
         CartInfo cartInfo = CartUtils.getCartInSession(request);
         
         mav.addObject("cartForm", cartInfo);
+        
+    return mav;
+    }
+    
+    
+    @GetMapping("/customerOrders")
+    public ModelAndView customerOrdersHandler(
+            HttpServletRequest request
+    ){
+        
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("customerOrders");
+    
+    return mav;
+    }
+    
+    
+    @GetMapping("/customerOrdersDetail")
+    public ModelAndView customerOrdersDetailHandler(
+            HttpServletRequest request 
+    ){
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("customerOrdersDetail");
         
     return mav;
     }
@@ -324,6 +361,29 @@ public class MainController {
         
         CartInfo cartInfo = CartUtils.getCartInSession(request);
         
+        Order order = new Order();
+        order.setStatus(OrderStatus.PENDING.name());
+        
+        order = this.orderService.create(order);
+        
+        List<OrderProduct> orderProducts = new ArrayList<>();
+        
+        List<CartLineInfo> lines = cartInfo.getCartLines();
+        
+        for(CartLineInfo line : lines){
+            orderProducts.add(orderProductService.create(
+                    new OrderProduct(
+                            order, 
+                            productService.getProduct(line.getProductInfo().getId()),
+                            line.getQuantity())));
+        }
+        
+        order.setOrderProducts(orderProducts);
+        
+        this.orderService.update(order);
+        
+        cartInfo.setOrderNum(order.getId());
+        
         CartUtils.removeCartInSession(request);
         CartUtils.storeLastOrderedCartInSession(request, cartInfo);
         
@@ -337,7 +397,11 @@ public class MainController {
     ){
         ModelAndView mav = new ModelAndView();
         
+        CartInfo lastOrderedCart = CartUtils.getLastOrderedCartInSession(request);
+        
         mav.setViewName("shoppingCartFinalize");
+        
+        mav.addObject("lastOrderedCart", lastOrderedCart);
         
     return mav;
         
