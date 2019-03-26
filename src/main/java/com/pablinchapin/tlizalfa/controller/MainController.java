@@ -6,12 +6,14 @@
 package com.pablinchapin.tlizalfa.controller;
 
 
+import com.pablinchapin.tlizalfa.entity.AuthProvider;
 import com.pablinchapin.tlizalfa.entity.Category;
 import com.pablinchapin.tlizalfa.entity.CustomerForm;
 import com.pablinchapin.tlizalfa.entity.Order;
 import com.pablinchapin.tlizalfa.entity.OrderProduct;
 import com.pablinchapin.tlizalfa.entity.OrderStatus;
 import com.pablinchapin.tlizalfa.entity.Product;
+import com.pablinchapin.tlizalfa.entity.User;
 import com.pablinchapin.tlizalfa.model.CartInfo;
 import com.pablinchapin.tlizalfa.model.CartLineInfo;
 import com.pablinchapin.tlizalfa.model.CustomerInfo;
@@ -190,12 +192,29 @@ public class MainController {
     
     @GetMapping("/customerOrders")
     public ModelAndView customerOrdersHandler(
-            HttpServletRequest request
+            HttpServletRequest request,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
     ){
         
         ModelAndView mav = new ModelAndView();
         mav.setViewName("customerOrders");
+        
+        PageRequest pageable = PageRequest.of(page -1, size);
+        
+        Page<Order> ordersPage = orderService.getOrdersByCustomerId(pageable, 1L);
+        
+        int totalPages = ordersPage.getTotalPages();
+        
+        if(totalPages > 0){
+            List<Integer> pageNumbers = IntStream.rangeClosed(1,totalPages).boxed().collect(Collectors.toList());
+            mav.addObject("pageNumbers", pageNumbers);
+        }
     
+                
+        mav.addObject("paginationResult", ordersPage);
+        
+        
     return mav;
     }
     
@@ -362,7 +381,17 @@ public class MainController {
         CartInfo cartInfo = CartUtils.getCartInSession(request);
         
         Order order = new Order();
+        User user = new User();
+        user.setId(1L);
+        user.setEmail("pablinchapin@gmail.com");
+        user.setEmailVerified(true);
+        user.setName("Pablo Alfonso Vargas");
+        user.setProvider(AuthProvider.google);
+        
+        
+                
         order.setStatus(OrderStatus.PENDING.name());
+        order.setUser(user);
         
         order = this.orderService.create(order);
         

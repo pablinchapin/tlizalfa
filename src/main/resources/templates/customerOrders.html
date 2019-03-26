@@ -31,7 +31,7 @@
         <h1 class="h3 mb-3 font-weight-normal">Order List</h1>
         
         
-        <th:block th:if="${orderForm == null}"> <!-- || cartForm.cartLines == null || cartForm.cartLines.empty -->
+        <th:block th:if="${paginationResult == null}"> <!-- || cartForm.cartLines == null || cartForm.cartLines.empty -->
             <div class="row">
                 <div class="col-md-12 mb-4">
                     <h4 class="d-flex justify-content-between align-items-center mb-3">
@@ -56,36 +56,52 @@
         
         
         
-        <th:block th:if="${orderForm != null}"> <!-- && cartForm.cartLines != null && !cartForm.cartLines.empty -->
+        <th:block th:if="${paginationResult != null}"> <!-- && cartForm.cartLines != null && !cartForm.cartLines.empty -->
 
-            <div class="card shopping-cart">
+            
+            <div class="card">
                 <div class="card-header bg-dark text-light">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                     Order List
+                    <!--
                     <a  href="#"
                         class="btn btn-primary btn-md active pull-right"
                         role="button"
                         aria-pressed="true"
                         th:href="@{/productList}">Continue shopping</a>
-                    <!--<a href="" class="btn btn-outline-info btn-sm pull-right">Continue shopping</a>-->
+                    -->
                     <div class="clearfix"></div>
                 </div>
 
                 <div class="card-body">
 
-
-                    <div class="row mb-3" th:each="cartLineInfo, varStatus : ${cartForm.cartLines}">
+                    
+                    <div class="row mb-3" th:each="orderInfo, varStatus : ${paginationResult}">
+                        <!--
                         <div class="col-12 col-sm-12 col-md-2 text-center">
                             <img class="img-responsive"  th:src="${cartLineInfo.productInfo.frontThumbImageUrl}" alt="prewiew" width="120" height="120">
-                            <!-- src="http://placehold.it/120x80" -->
+                            
                         </div>
+                        -->
 
                         <div class="col-12 text-sm-center col-sm-12 text-md-left col-md-6">
-                            <h4 class="product-name"><strong th:utext="${cartLineInfo.productInfo.name}"></strong></h4>
+                            <h4 class="product-name"><strong th:utext="${orderInfo.id}"></strong></h4>
                             <h4>
-                                <small th:utext="${cartLineInfo.productInfo.id}"></small>
+                                <small th:utext="${orderInfo.dateCreated}"></small><br>
+                                <small th:utext="${orderInfo.status}"></small>
                             </h4>
                         </div>
+                        
+                        <div class="col-12 col-sm-12 text-sm-center col-md-4 text-md-right">
+                        <a  href="#"
+                            class="btn btn-primary btn-md"
+                            role="button"
+                            aria-pressed="true"
+                            th:href="@{|/productDetail?id=${orderInfo.id}|}">View</a>
+                        </div>
+                        
+                        
+                        <!--
                         <form th:action="@{|/shoppingCart?code=${cartLineInfo.productInfo.id}|}"
                                 method="POST" class="col-12 col-sm-12 text-sm-center col-md-4 text-md-right row">
                             <div class="col-3 col-sm-3 col-md-6 text-md-right" style="padding-top: 5px">
@@ -111,16 +127,17 @@
 
                             </div>
                         </form>
+                        -->
                     <hr>
                     </div>
 
-
+                    
                     <div class="pull-right">
                         <a href="" class="btn btn-outline-secondary pull-right">Update shopping cart</a>
                     </div>
 
                 </div>
-
+                <!--
                 <div class="card-footer">
                     
                     <div class="pull-right" style="margin: 10px">
@@ -135,7 +152,9 @@
                     </div>
                 
                 </div>
+                -->
             </div>
+            
             
         </th:block>
         

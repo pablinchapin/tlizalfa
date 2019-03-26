@@ -15,7 +15,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
@@ -43,6 +45,10 @@ public class Order {
     @Valid
     private List<OrderProduct> orderProducts = new ArrayList<>();
     
+    @OneToOne()
+    @JoinColumn(name = "user_id", nullable = false)
+    @Valid
+    private User user;
     
     @Transient
     public Double getTotalOrderPrice(){
@@ -94,6 +100,16 @@ public class Order {
     public int getNumberOfProducts(){
         return this.orderProducts.size();
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    
     
     
     

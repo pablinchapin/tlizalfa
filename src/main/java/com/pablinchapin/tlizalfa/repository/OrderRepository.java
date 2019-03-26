@@ -18,5 +18,6 @@ public interface OrderRepository extends CrudRepository<Order, Long>{
     
     Page<Order> findAll(Pageable pageable);
     
+    Page<Order> findByUserId(Pageable pageable, Long userId);
     
 }
