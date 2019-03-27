@@ -1,9 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">LaLiz</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no shrink-to-fit=no"/>
+    
+    <link   rel="stylesheet" 
+            href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" 
+            th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css}"
+            integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" 
+            crossorigin="anonymous">
+    <link   rel="stylesheet" 
+            href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+            th:href="@{https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"/>
+    <link   rel="stylesheet" 
+            href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css"
+            th:href="@{https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css}"/>
+</head>
+<body>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light"
     xmlns:th="http://www.thymeleaf.org"
     xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
     
-    <a class="navbar-brand" href="#">LaChoca</a>
+    <a class="navbar-brand" href="#">TL</a>
     <button class="navbar-toggler" 
             type="button" data-toggle="collapse"
             data-target="#navbarToggler"
@@ -86,7 +109,7 @@
                 <a  class="btn btn btn-outline-success my-2 my-sm-0"
                     role="button"
                     aria-pressed="true"
-                    th:href="@{/admin/logout}">Logout</a>
+                    th:href="@{/auth/logout}">Logout</a>
             </th:block>
             
             
@@ -94,7 +117,7 @@
                 <a  class="btn btn-outline-success my-2 my-sm-0"
                     role="button"
                     aria-pressed="true"
-                    th:href="@{/admin/login}">Login</a>
+                    th:href="@{/auth/login}">Login</a>
             </th:block>
             
             

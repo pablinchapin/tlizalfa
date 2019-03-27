@@ -1,29 +1,5 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" 
-      xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">LaLiz</title>
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no shrink-to-fit=no"/>
-    
-    <link   rel="stylesheet" 
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" 
-            th:href="@{https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css}"
-            integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" 
-            crossorigin="anonymous">
-    <link   rel="stylesheet" 
-            href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
-            th:href="@{https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css}"/>
-    <link   rel="stylesheet" 
-            href="https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css"
-            th:href="@{https://unpkg.com/ionicons@4.5.5/dist/css/ionicons.min.css}"/>
-</head>
-<body>
-    
+   
     <th:block th:include="/_header"></th:block>
-    
     
     
     <div class="container">
@@ -32,11 +8,11 @@
         
         
         <!-- && cartForm.cartLines != null && !cartForm.cartLines.empty -->
-        <th:block th:if="${orderForm == null}"> 
+        <th:block th:if="${orderDetail == null}"> 
             <div class="row">
                 <div class="col-md-12 mb-4">
                     <h4 class="d-flex justify-content-between align-items-center mb-3">
-                        <span class="text-muted">There are no details for order</span>
+                        <span class="text-muted">There are no details for this order</span>
                         <span class="badge bagde-secondary badge-pill">0</span>
                     </h4>
                     
@@ -51,36 +27,70 @@
         </th:block>
         
         
-        <th:block th:if="${orderForm != null}">
+        <th:block th:if="${orderDetail != null}">
         
             <div class="card shopping-cart">
                 <div class="card-header bg-dark text-light">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                    Shopping cart
+                    Order #
+                    
+                    <!--
                     <a  href="#"
                         class="btn btn-primary btn-md active pull-right"
                         role="button"
                         aria-pressed="true"
                         th:href="@{/productList}">Continue shopping</a>
+                    -->
                     <!--<a href="" class="btn btn-outline-info btn-sm pull-right">Continue shopping</a>-->
                     <div class="clearfix"></div>
                 </div>
 
                 <div class="card-body">
 
+                    <div class="col-12 text-sm-center col-sm-12 text-md-left col-md-6">
+                        <h4 class="product-name"><strong th:utext="${orderDetail.dateCreated}"></strong></h4>
+                        <h4>#
+                            <small th:utext="${orderDetail.id}"></small>
+                        </h4>
+                        <h4>
+                            <small th:utext="${orderDetail.status}"></small>
+                        </h4>
+                    </div>
 
-                    <div class="row mb-3" th:each="cartLineInfo, varStatus : ${cartForm.cartLines}">
+                    
+                    
+                    <div class="row mb-3" th:each="productLineInfo, varStatus : ${orderDetail.orderProducts}">
                         <div class="col-12 col-sm-12 col-md-2 text-center">
-                            <img class="img-responsive"  th:src="${cartLineInfo.productInfo.frontThumbImageUrl}" alt="prewiew" width="120" height="120">
-                            <!-- src="http://placehold.it/120x80" -->
+                            
+                            <img class="img-responsive"  th:src="${productLineInfo.Product.frontThumbImageUrl}" alt="prewiew" width="120" height="120">
+                            
                         </div>
 
                         <div class="col-12 text-sm-center col-sm-12 text-md-left col-md-6">
-                            <h4 class="product-name"><strong th:utext="${cartLineInfo.productInfo.name}"></strong></h4>
+                            <h4 class="product-name"><strong th:utext="${productLineInfo.Product.name}"></strong></h4>
                             <h4>
-                                <small th:utext="${cartLineInfo.productInfo.id}"></small>
+                                <small th:utext="${productLineInfo.Product.id}"></small>
                             </h4>
                         </div>
+                        
+                        <div class="col-12 col-sm-12 text-sm-center col-md-4 text-md-right row">
+                            <div class="col-3 col-sm-3 col-md-6 text-md-right" style="padding-top: 5px">
+                                <h6><strong th:utext="${#numbers.formatDecimal(productLineInfo.Product.price,3,2,'POINT')}"><span class="text-muted">x</span></strong></h6>
+                            </div>
+
+                            <div class="col-4 col-sm-4 col-md-4">
+                                <div class="quantity">
+                                    <!--
+                                    <span 
+                                            class="form-control" 
+                                            name="quantity" th:value="${cartLineInfo.quantity}" min="0"
+                                            aria-describedby="Quantity" placeholder="" ></span>-->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <!--
                         <form th:action="@{|/shoppingCart?code=${cartLineInfo.productInfo.id}|}"
                                 method="POST" class="col-12 col-sm-12 text-sm-center col-md-4 text-md-right row">
                             <div class="col-3 col-sm-3 col-md-6 text-md-right" style="padding-top: 5px">
@@ -106,12 +116,14 @@
 
                             </div>
                         </form>
+                        -->
                     <hr>
                     </div>
+                    
 
 
                     <div class="pull-right">
-                        <a href="" class="btn btn-outline-secondary pull-right">Update shopping cart</a>
+                        <a href="" class="btn btn-outline-secondary pull-right">Button for an action</a>
                     </div>
 
                 </div>
@@ -130,14 +142,24 @@
                         -->
                     </div>
                     <div class="pull-right" style="margin: 10px">
+                        
                         <a  href="#"
-                            class="btn btn-primary btn-md active"
+                            class="btn btn-warning btn-md active"
                             role="button"
                             aria-pressed="true"
-                            th:href="@{/shoppingCartCheckout}">Checkout</a>
+                            >Re-order</a>
+                        
+                        <a  href="#"
+                            class="btn btn-danger btn-md active"
+                            role="button"
+                            aria-pressed="true"
+                            >Cancel</a>
+                        <!--
+                        th:href="@{/shoppingCartCheckout}"
                         <div class="pull-right" style="margin: 5px">
                             Total price: <b th:utext="${#numbers.formatDecimal(cartForm.amountTotal,3,2,'POINT')}"></b>
                         </div>
+                        -->
                     </div>
                 </div>
             </div>
@@ -147,10 +169,3 @@
     </div>
         
     <th:block th:include="/_footer"></th:block>
-    
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-      
-</body>
-</html>

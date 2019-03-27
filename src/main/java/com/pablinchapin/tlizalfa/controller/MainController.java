@@ -221,10 +221,16 @@ public class MainController {
     
     @GetMapping("/customerOrdersDetail")
     public ModelAndView customerOrdersDetailHandler(
-            HttpServletRequest request 
+            HttpServletRequest request,
+            @RequestParam(value = "id", required = true) Long id
     ){
+        
         ModelAndView mav = new ModelAndView();
         mav.setViewName("customerOrdersDetail");
+        
+        Order order = orderService.getOrderDetail(id);
+        
+        mav.addObject("orderDetail", order);
         
     return mav;
     }
