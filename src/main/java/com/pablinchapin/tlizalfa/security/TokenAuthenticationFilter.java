@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,8 +26,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     
+    @Autowired
     private TokenProvider tokenProvider;
     
+    @Autowired
     private CustomUserDetailsService customUserDetailsService;
     
     private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
@@ -37,7 +40,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         try{
             String jwt = getJwtFromRequest(request);
             
+            logger.info("JWT->" +jwt);
+            
             if(StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)){
+                
                 Long userId = tokenProvider.getUserIdFromToken(jwt);
                 
                 UserDetails userDetails = customUserDetailsService.loadUserById(userId);
@@ -49,7 +55,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }catch(Exception ex){
-            logger.error("Could not set uer authentication in security context", ex.getLocalizedMessage());
+            logger.error("Could not set uer authentication in security context", ex);
         }
         
         fc.doFilter(request, response);
@@ -58,8 +64,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     
     
     private String getJwtFromRequest(HttpServletRequest request){
+        
+                
         String bearerToken = request.getHeader("Authorization");
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")){
+            
             return bearerToken.substring(7, bearerToken.length());
         }
         

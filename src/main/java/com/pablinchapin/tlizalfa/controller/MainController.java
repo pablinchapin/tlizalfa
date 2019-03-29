@@ -19,6 +19,7 @@ import com.pablinchapin.tlizalfa.model.CartLineInfo;
 import com.pablinchapin.tlizalfa.model.CustomerInfo;
 import com.pablinchapin.tlizalfa.model.ProductInfo;
 import com.pablinchapin.tlizalfa.service.CategoryServiceImpl;
+import com.pablinchapin.tlizalfa.service.EmailService;
 import com.pablinchapin.tlizalfa.service.OrderProductServiceImpl;
 import com.pablinchapin.tlizalfa.service.OrderServiceImpl;
 import com.pablinchapin.tlizalfa.service.ProductServiceImpl;
@@ -67,6 +68,9 @@ public class MainController {
     
     @Autowired
     OrderProductServiceImpl orderProductService;
+    
+    @Autowired
+    EmailService emailService;
     
     
     
@@ -416,6 +420,8 @@ public class MainController {
         order.setOrderProducts(orderProducts);
         
         this.orderService.update(order);
+        
+        emailService.sendSimpleMail("pablovargasmelgar@gmail.com", "Order created", "This is a test email for a new order notification");
         
         cartInfo.setOrderNum(order.getId());
         

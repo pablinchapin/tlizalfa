@@ -52,16 +52,20 @@ public class TokenProvider {
     
     
     public Long getUserIdFromToken(String token){
+        
         Claims claims = Jwts.parser()
                 .setSigningKey(appProperties.getAuth().getTokenSecret())
                 .parseClaimsJws(token)
                 .getBody();
+        
+        logger.error("UserID " +Long.parseLong(claims.getSubject()));
         
         return Long.parseLong(claims.getSubject());
     }
     
     
     public boolean validateToken(String authToken){
+        
         try {
             Jwts.parser().setSigningKey(appProperties.getAuth().getTokenSecret()).parseClaimsJws(authToken);
             return true;

@@ -28,7 +28,7 @@ public class UserController {
     
     
     @GetMapping("/user/me")
-    @PreAuthorize("hastRole('USER')")
+    @PreAuthorize("hasRole('USER')")
     public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal){
     
         return userRepository.findById(userPrincipal.getId())
