@@ -421,7 +421,17 @@ public class MainController {
         
         this.orderService.update(order);
         
-        emailService.sendSimpleMail("pablovargasmelgar@gmail.com", "Order created", "This is a test email for a new order notification");
+        //This needs to be from user data and maybe some templates service
+        String to = "pablovargasmelgar@gmail.com";
+        String subject = "Order created";
+        String content = "This is a test email for a new order notification";
+        String imageUri = "/home/pvargas/Pictures/pablinchapin.jpg";
+        String template = "<h3> Im sending and Email from HTML template </h3>"
+                    + "<img src='http://www.apache.org/images/asf_logo_wide.gif'>";
+        
+        //emailService.sendEmailSimple(to, subject, content);
+        emailService.sendEmailFromTemplate(to, subject, template, imageUri);
+        
         
         cartInfo.setOrderNum(order.getId());
         
